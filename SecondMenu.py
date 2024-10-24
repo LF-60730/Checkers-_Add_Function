@@ -12,6 +12,8 @@ from game import Game
 from computer import minimax
 from MusicClass import BackgroundMusic
 from SharedObjects import background_music
+from ThirdMenu import ThirdMenu
+
 
 
 Width, Height = 1000, 700
@@ -180,10 +182,12 @@ class SecondMenu:
                     elif button_rect_2.collidepoint(event.pos):  # Start Game VS Computer button clicked
                         player1_name.get_player_name()
                         score_manager.add_user(player1_name.username)
-                        self.start_game_vs_computer(start_game_screen)
-                        score_manager.save_scores()
+                        # Create an instance of ThirdMenu and start the difficulty menu
+                        third_menu = ThirdMenu(self.selected_music_track, self.color,player1_name)  # Pass color too
+                        third_menu.start_difficulty_menu()  # This will display the difficulty selection menu
+                        
                         return
-                # score_manager.save_scores() # now inside elif so scores are updated before returning to main
+                
                     elif event.type == self.background_music.SONG_END:
                         self.background_music.handle_event(event)
                   
@@ -234,49 +238,4 @@ class SecondMenu:
 
             game.update()
 
-    def start_game_vs_computer(self, screen): 
-        """
-        The start game vs computer function starts the game against the computer by creating an object of the game class and passing the screen, color, and player name.
-        """
-        run = True
-        clock = pygame.time.Clock()
-        game = Game(screen, self.color, player1_name.username, "Computer")
-        global score_manager, user_scores
-
-        # Exit Button
-        button_font = pygame.font.Font(None, 32)
-        exit_text = button_font.render("Exit Game", True, (255, 255, 255))
-        exit_button_rect = exit_text.get_rect(center=(Width // 2+350, Height - 100))
-        pygame.draw.rect(screen, (128, 128, 128), exit_button_rect)
-        screen.blit(exit_text, exit_button_rect)
-        pygame.display.flip()
-
-        while run:
-            clock.tick(60)
-            if game.turn == WHITE:
-                value, new_board = minimax(game.get_board(), 4, WHITE, game)
-                game.ai_move(new_board) 
-
-            if game.winner() != None:
-                print(game.winner())
-                run = False
-                if game.winner() == RED:
-                    player1_name.update_win()
-                    score_manager.update_scores(player1_name)
-                else:
-                    player1_name.update_loss()
-                    score_manager.update_scores(player1_name)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
-            
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    row, col = get_row_col_from_mouse(pos)
-                    game.select(row, col)
-                    
-                if event.type == background_music.SONG_END:
-                        background_music.handle_event(event)
-
-            game.update()
+    

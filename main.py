@@ -7,7 +7,7 @@ import pygame
 from SecondMenu import SecondMenu
 from constants import BLUE, YELLOW, RED, GREEN
 from ScoreManager import ScoreManager
-from SecondMenu import SecondMenu
+from ThirdMenu import ThirdMenu
 
 
 pygame.init()
@@ -24,7 +24,7 @@ tracks = ["music/Track1.mp3", "music/Track2.mp3", "music/Track3.mp3", "music/Tra
 current_track = 0
 SONG_END = pygame.USEREVENT + 1
 second_menu = SecondMenu(tracks)
-
+time_limit = 10  # Default to Easy difficulty  
 
 def music_loop():
     """
@@ -377,8 +377,12 @@ def tutorial():
                     return  # exit tutorial and return to menu
             elif event.type == SONG_END:
                 music_loop()
-                
+
+
 def settings():
+
+    global time_limit  # Access the global variable
+
     """
     The settings function displays the settings screen. It displays the music button that allows the user to stop and play the music. It allows the user to exit 
     the settings after clicking the exit button.
@@ -443,6 +447,38 @@ def settings():
                         music_playing = True
             elif event.type == SONG_END and music_playing == True:
                 music_loop()
+
+
+    # Difficulty Selection
+    difficulty_font = pygame.font.Font(None, 32)
+    difficulty_text = difficulty_font.render("Select Difficulty", True, (255, 255, 255))
+    difficulty_rect = difficulty_text.get_rect(center=(Width // 2, Height // 2))
+    settings_screen.blit(difficulty_text, difficulty_rect)
+
+    easy_button = pygame.Rect(Width // 2 - 100, Height // 2 + 50, 200, 50)
+    normal_button = pygame.Rect(Width // 2 - 100, Height // 2 + 110, 200, 50)
+    hard_button = pygame.Rect(Width // 2 - 100, Height // 2 + 170, 200, 50)
+
+    pygame.draw.rect(settings_screen, (128, 128, 128), easy_button)
+    pygame.draw.rect(settings_screen, (128, 128, 128), normal_button)
+    pygame.draw.rect(settings_screen, (128, 128, 128), hard_button)
+
+    easy_text = difficulty_font.render("Easy (10s)", True, (255, 255, 255))
+    normal_text = difficulty_font.render("Normal (5s)", True, (255, 255, 255))
+    hard_text = difficulty_font.render("Hard (2s)", True, (255, 255, 255))
+
+    settings_screen.blit(easy_text, easy_button.topleft)
+    settings_screen.blit(normal_text, normal_button.topleft)
+    settings_screen.blit(hard_text, hard_button.topleft)
+
+    # Existing event handling code...
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if easy_button.collidepoint(event.pos):
+            time_limit = 10  # Easy mode
+        elif normal_button.collidepoint(event.pos):
+            time_limit = 5   # Normal mode
+        elif hard_button.collidepoint(event.pos):
+            time_limit = 2   # Hard mode
 
 def show_leaderboard():
     """
@@ -564,5 +600,26 @@ def board_customization():
                     second_menu_instance.color = GREEN
             elif event.type == SONG_END:
                 music_loop()
+
+def handle_player_turn():
+    global time_limit  # Ensure you can access the time limit variable
+    start_time = pygame.time.get_ticks()  # Get the current time in milliseconds
+
+    while True:
+        current_time = pygame.time.get_ticks() - start_time  # Time elapsed
+        remaining_time = time_limit * 1000 - current_time  # Convert to milliseconds
+
+        if remaining_time <= 0:
+            # Handle time up scenario
+            print("Time's up! You missed your turn.")
+            break  # End the turn
+        else:
+            # Display remaining time
+            time_text = font.render(f"Time remaining: {remaining_time // 1000} seconds", True, (255, 255, 255))
+            screen.blit(time_text, (10, 10))  # Display the time on the screen
+            
+            # Handle player input and game logic...
+            # Make sure to break the loop based on player actions or other conditions
+
 
 main()
