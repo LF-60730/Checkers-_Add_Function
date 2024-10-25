@@ -71,11 +71,12 @@ class ThirdMenu:
         cursor_color = (100, 100, 100)  # Darker grey
         color = (128, 128, 128)  # Grey
 
+        
         # Difficulty Buttons
         difficulty_buttons = [
-            ("Easy", (Width // 2 - 150, Height // 3), (300, 50)),
-            ("Normal", (Width // 2 - 150, Height // 3 + 60), (300, 50)),
-            ("Hard", (Width // 2 - 150, Height // 3 + 120), (300, 50)),
+            ("Easy" , (Width // 2 - 150, Height // 3), (300, 50)),
+            ("Normal" , (Width // 2 - 150, Height // 3 + 60), (300, 50)),
+            ("Hard" , (Width // 2 - 150, Height // 3 + 120), (300, 50)),
         ]
 
         # Display the background
@@ -88,7 +89,7 @@ class ThirdMenu:
 
         # Create and draw buttons
         button_rects = []
-        for text, pos, size in difficulty_buttons:
+        for text , pos, size in difficulty_buttons:
             button_rect = pygame.Rect(pos, size)
             button_rects.append(button_rect)
 
@@ -124,7 +125,7 @@ class ThirdMenu:
                             self.start_game_vs_computer(start_game_screen, self.difficulty)
                             return  # Exit the menu after starting the game
 
-            pygame.display.update()
+        pygame.display.update()
 
     def start_game_vs_computer(self, screen, difficulty): 
         """
